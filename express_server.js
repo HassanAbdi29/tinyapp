@@ -10,20 +10,16 @@ const urlDatabase = {
 };
 
 function generateRandomString() { 
-  // random 6 digit, a-z 1-0
-  // limit string to 6 characters 
-  // place in array 
-  // 
+
 let outputString = ""
 
   const characters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "y", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" ]
- //generate 6 random characters
-// assignment; condition; incremient 
+
  for ( let i=0; i<6; i++) {
   let randomIndex = Math.floor(Math.random() * characters.length)
   let randomCharacter = characters[randomIndex] 
   outputString += randomCharacter 
- //console.log(randomCharacter)
+  
  }
  return outputString;
 }
@@ -52,11 +48,35 @@ app.get("/urls/:id", (req, res) => {
   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id]/* What goes here? */ };
   res.render("urls_show", templateVars);
 });
-app.post("/urls", (req, res) => {
+app.get("/u/:id", (req, res) => {
+    const longURL = urlDatabase[req.params.id]
+    res.redirect(longURL);
+  });
+
+app.post("/urls/", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
-  // Need the LongUrl as a variable 
-  // Need ID as a variable
-  // Need to create object  the follows the formate id:URL 
-  // Add this object into URL database 
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  const urlId = generateRandomString();
+  urlDatabase[urlId] = req.body.longURL
+  res.redirect("/urls");
 });
+app.post("/urls/:id/delete", (req, res) => {
+  delete urlDatabase[req.params.id]
+  res.redirect("/urls")
+  });
+app.post("/urls/:id/edit", (req, res) => {
+  //if (req.params.id) {
+    //if (req.session.userId === urlDatabase[req.params.id].userID) {
+      //urlDatabase[req.params.id].longURL = req.body.longURL;
+      //res.redirect('/urls');
+    //} else {
+      //res.status(401).send('You are not authorized to view this page');
+    //}
+  //} else {
+    //res.status(404).send('Page not found');
+  //} 
+
+  const longURL = urlDatabase[req.params.id]
+ let newLongURL = req.body.longURL
+ urlDatabase[req.params.id] = newLongURL
+      res.redirect("/urls");
+      });
